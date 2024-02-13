@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { desktopDir } from "@tauri-apps/api/path";
-import { readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import { addClient } from "../../api/api";
 
 type ModalProps = {
     open: boolean;
@@ -10,24 +9,17 @@ type ModalProps = {
 function Modal(params: ModalProps) {
     const { open, close } = params;
     const [name, setName] = useState("");
-    const [added, setAdded] = useState(false);
 
     const addNewClient = async () => {
         const client = {
             name: name,
         };
-        const appPath = await desktopDir();
 
-        const data = await readTextFile(`${appPath}/clients.json`);
-
-        const clients = JSON?.parse(data) || [];
-
-        clients.push(client);
-
-        await writeTextFile(`${appPath}/clients.json`, JSON.stringify(clients));
-
+        const response = await addClient(client);
+        console.log(response);
         setName("");
-        setAdded(true);
+
+        close();
     };
 
     return (
@@ -48,11 +40,6 @@ function Modal(params: ModalProps) {
                         placeholder="Nombre"
                         className="border border-gray-400 p-2 rounded-md"
                     />
-                    {
-                        added && (
-                            <p className="text-green-500">Cliente añadido</p>
-                        )
-                    }
                     <button
                         onClick={addNewClient}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer"
