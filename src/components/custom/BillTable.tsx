@@ -6,12 +6,10 @@ import {
     getSortedRowModel,
     getFilteredRowModel,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import moment from "moment";
-import { getClientBills } from "../../api/api";
-import { useClientStore } from "../../store/clientStore";
-import { useBillStore } from "../../store/billStore";
 import "./Billtable.css";
+
 //TData
 type Bill = {
     _id: number;
@@ -22,10 +20,15 @@ type Bill = {
     base: number;
 };
 
-function BillTable() {
-    const [bills, setBills] = useState<Bill[]>([]);
-    const client = useClientStore((state) => state.client);
-    const setTotal = useBillStore((state) => state.setTotal);
+//definir props del componente
+
+type Props = {
+    data: Bill[];
+};
+
+function BillTable(props: Props) {
+    //#region VARIABLES
+    const { data } = props;
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
     const columns = [
@@ -53,8 +56,10 @@ function BillTable() {
             accessorKey: "base",
         },
     ];
+    //#endregion
+
     const table = useReactTable({
-        data: bills,
+        data: data,
         columns,
         getCoreRowModel: getCoreRowModel<Bill>(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -68,18 +73,8 @@ function BillTable() {
         onGlobalFilterChange: setFiltering as any,
     });
 
-    useEffect(() => {
-        if (client) {
-            getClientBills(client._id).then((data) => {
-                setBills(data);
-                const total = data.reduce((acc: number, bill: any) => acc + bill.amount, 0);
-                setTotal(total);
-            });
-        }
-    }, [client]);
-
     return (
-        <>
+        <div>
             <input
                 type="text"
                 value={filtering}
@@ -148,7 +143,7 @@ function BillTable() {
                     Última página
                 </button>
             </div>
-        </>
+        </div>
     );
 }
 

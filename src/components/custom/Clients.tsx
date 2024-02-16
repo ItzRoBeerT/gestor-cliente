@@ -20,16 +20,16 @@ function Clients() {
         setClient(client);
     };
     //#endregion
-    
+
     return (
         <div className="text-center">
-            <div className="bg-red-950">
-                <h1>Clients</h1>
+            <div className="bg-gray-800 py-4 px-6">
+                <h1 className="text-white text-2xl font-bold">Clientes</h1>
             </div>
             <ul className="text-blue-400 bg-white overflow-auto">
                 {clients.map((client: Client) => (
                     <li
-                        className="cursor-pointer"
+                        className="cursor-pointer py-2 px-4 hover:bg-gray-100"
                         onClick={() => {
                             handleClientClick(client);
                         }}

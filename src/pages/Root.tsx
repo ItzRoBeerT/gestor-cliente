@@ -4,7 +4,7 @@ import Header from "../components/layout/Header";
 function RootLayout() {
     
     return (
-        <div>
+        <div className="h-screen overflow-hidden">
             <Header />
             <Outlet />
         </div>
