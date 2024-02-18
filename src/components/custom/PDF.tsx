@@ -1,5 +1,7 @@
 import { Document, Page, Text, StyleSheet, View } from "@react-pdf/renderer";
 import { Fragment } from "react";
+import moment from "moment";
+import { Bill } from "../../models/types";
 
 const styles = StyleSheet.create({
     page: {
@@ -7,8 +9,10 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     tableContainer: {
-        flexDirection: "row",
-        flexWrap: "wrap",
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        marginTop: 10,
     },
     headerRow: {
         flexDirection: "row",
@@ -17,14 +21,15 @@ const styles = StyleSheet.create({
         color: "white",
     },
     row: {
+        display: "flex",
         flexDirection: "row",
-        alignItems: "center",
         borderBottomWidth: 1,
         borderColor: "#ddd",
         padding: 5,
+        fontSize: 10,
     },
     description: {
-        width: "60%",
+        width: "100%",
         paddingLeft: 5,
     },
     xyz: {
@@ -34,54 +39,80 @@ const styles = StyleSheet.create({
 });
 
 type ItemsTableProps = {
-    items: any[];
+    items: Bill[];
+    columns?: any[];
 };
 
-const data = {
-    id: "5df3180a09ea16dc4b95f910",
-    items: [
-        {
-            sr: 1,
-            desc: "desc1",
-            xyz: 5,
-        },
-        {
-            sr: 2,
-            desc: "desc2",
-            xyz: 6,
-        },
-    ],
+type PDFProps = {
+    columns: any[];
+    data: any[];
 };
 
-function PDF() {
+function PDF(props: PDFProps) {
+    const { columns, data } = props;
+    console.log({ data });
+
     return (
-        <Document style={{width: '100%'}}>
+        <Document style={{ width: "100%" }}>
             <Page style={styles.page}>
                 <Text>Factura</Text>
-                <ItemsTable items={data.items} />
+                <ItemsTable items={data} columns={columns} />
             </Page>
         </Document>
     );
 }
 
 //#region AUXILIARES
-const ItemsTable = (props: ItemsTableProps) => {
+const Header = (props: ItemsTableProps) => {
     const { items } = props;
     return (
+        <View style={styles.headerRow}>
+            {items.map((item, index) => (
+                <Text key={index.toString()} style={styles.description}>
+                    {item.header}
+                </Text>
+            ))}
+        </View>
+    );
+};
+
+const ItemsTable = (props: ItemsTableProps) => {
+    const { items, columns } = props;
+    return (
         <View style={styles.tableContainer}>
+            <Header items={columns || []} />
             <TableRow items={items} header />
         </View>
     );
 };
 
 const TableRow = (props: ItemsTableProps & { header?: boolean }) => {
-    const { items, header } = props;
-    const rows = items.map((item, index) => (
-        <View style={header ? styles.headerRow : styles.row} key={index.toString()}>
-            <Text style={styles.description}>{item.desc}</Text>
-            <Text style={styles.xyz}>{item.xyz}</Text>
-        </View>
-    ));
+    const { items } = props;
+    const filteredColumns = items.map((invoice) => {
+        return Object.keys(invoice).reduce((acc, key) => {
+            if (key === "_id" || key === "__v" || key === "client") return acc;
+            if (key === "date") {
+                acc[key] = moment(invoice[key]).format("DD/MM/YYYY");
+            } else {
+                acc[key] = invoice[key];
+            }
+            return acc;
+        }, {}) as Bill;
+    });
+
+    console.log({ filteredColumns });
+
+    const rows = items.map((invoice, index) => {
+        return (
+            <View key={index.toString()} style={styles.row}>
+                <Text style={{ width: "20%" }}>{filteredColumns[index].invoice}</Text>
+                <Text style={{ width: "20%" }}>{filteredColumns[index].date}</Text>
+                <Text style={{ width: "20%" }}>{filteredColumns[index].amount}</Text>
+                <Text style={{ width: "20%" }}>{filteredColumns[index].iva}</Text>
+                <Text style={{ width: "20%" }}>{filteredColumns[index].base}</Text>
+            </View>
+        );
+    });
     return <Fragment>{rows}</Fragment>;
 };
 //#endregion

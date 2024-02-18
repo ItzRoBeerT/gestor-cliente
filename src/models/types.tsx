@@ -10,4 +10,6 @@ export type Bill = {
     date: string;
     iva: number;
     base: number;
+    __v: number;
+    client: string;
 };

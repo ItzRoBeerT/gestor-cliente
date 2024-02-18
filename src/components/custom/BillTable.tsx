@@ -7,7 +7,6 @@ import {
     getFilteredRowModel,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import moment from "moment";
 import "./Billtable.css";
 
 //TData
@@ -24,38 +23,14 @@ type Bill = {
 
 type Props = {
     data: Bill[];
+    columns: any[];
 };
 
 function BillTable(props: Props) {
     //#region VARIABLES
-    const { data } = props;
+    const { data, columns } = props;
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
-    const columns = [
-        {
-            header: "Factura",
-            accessorKey: "invoice",
-        },
-        {
-            header: "Fecha",
-            accessorKey: "date",
-            cell: (info: { getValue: () => moment.MomentInput }) => {
-                return moment(info.getValue()).format("DD/MM/YYYY");
-            },
-        },
-        {
-            header: "Importe",
-            accessorKey: "amount",
-        },
-        {
-            header: "IVA",
-            accessorKey: "iva",
-        },
-        {
-            header: "Base",
-            accessorKey: "base",
-        },
-    ];
     //#endregion
 
     const table = useReactTable({
@@ -84,7 +59,7 @@ function BillTable(props: Props) {
             <table>
                 <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
+                        <tr key={headerGroup.id} className="cursor-pointer">
                             {headerGroup.headers.map((header) => (
                                 <th
                                     key={header.id}
@@ -96,8 +71,8 @@ function BillTable(props: Props) {
                                     )}
                                     {header.column.getIsSorted()
                                         ? header.column.getIsSorted() === "asc"
-                                            ? "up"
-                                            : "down"
+                                            ? "⬆️"
+                                            : "⬇️"
                                         : null}
                                 </th>
                             ))}
@@ -117,30 +92,34 @@ function BillTable(props: Props) {
                 </tbody>
             </table>
 
-            <div className="flex justify-center mt-4">
-                <button
-                    className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => table.setPageIndex(0)}
-                >
-                    Primera página
-                </button>
-                <button
-                    className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => table.nextPage()}
-                >
-                    Siguiente
-                </button>
-                <button
-                    className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => table.previousPage()}
-                >
-                    Anterior
-                </button>
+            <div className="flex justify-center mt-4 gap-4">
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 >
                     Última página
+                </button>
+                <button
+                    className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => table.previousPage()}
+                >
+                    Anterior
+                </button>
+                <button
+                    className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => {
+                        if (table.getPageCount() < table.getPageCount() - 1) {
+                            table.nextPage();
+                        }
+                    }}
+                >
+                    Siguiente
+                </button>
+                <button
+                    className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => table.setPageIndex(0)}
+                >
+                    Primera página
                 </button>
             </div>
         </div>
