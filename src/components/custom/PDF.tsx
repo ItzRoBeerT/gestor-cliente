@@ -107,9 +107,9 @@ const TableRow = (props: ItemsTableProps & { header?: boolean }) => {
             <View key={index.toString()} style={styles.row}>
                 <Text style={{ width: "20%" }}>{filteredColumns[index].invoice}</Text>
                 <Text style={{ width: "20%" }}>{filteredColumns[index].date}</Text>
-                <Text style={{ width: "20%" }}>{filteredColumns[index].amount}</Text>
-                <Text style={{ width: "20%" }}>{filteredColumns[index].iva}</Text>
                 <Text style={{ width: "20%" }}>{filteredColumns[index].base}</Text>
+                <Text style={{ width: "20%" }}>{filteredColumns[index].iva}</Text>
+                <Text style={{ width: "20%" }}>{filteredColumns[index].amount}</Text>
             </View>
         );
     });

@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import "./Billtable.css";
+import InvoiceModal from "../Form/InvoiceModal";
 
 //TData
 type Bill = {
@@ -31,6 +32,7 @@ function BillTable(props: Props) {
     const { data, columns } = props;
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
+    const [open, setOpen] = useState(false);
     //#endregion
 
     const table = useReactTable({
@@ -50,12 +52,21 @@ function BillTable(props: Props) {
 
     return (
         <div>
-            <input
-                type="text"
-                value={filtering}
-                onChange={(e) => setFiltering(e.target.value)}
-                className="border text-black border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            <div className="flex gap-4 mb-4">
+                <input
+                    type="text"
+                    value={filtering}
+                    placeholder="Busca para filtrar..."
+                    onChange={(e) => setFiltering(e.target.value)}
+                    className="border text-black border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => setOpen(true)}
+                >
+                    Agregar factura
+                </button>
+            </div>
             <table>
                 <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -122,6 +133,7 @@ function BillTable(props: Props) {
                     Primera página
                 </button>
             </div>
+            <InvoiceModal open={open} close={() => setOpen(false)} />
         </div>
     );
 }
