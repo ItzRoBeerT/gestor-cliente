@@ -61,28 +61,28 @@ function Client() {
     //#endregion
 
     return (
-        <div className="m-4 w-full grid grid-cols-10 gap-4">
-            <section className="col-span-5 gap-4 flex flex-col">
-                <h1>{client?.name}</h1>
-                <BillTable data={bills} columns={columns} />
-                <div className="bg-white rounded-md p-4 flex flex-col w-fit">
-                    <span className="font-bold text-2xl">
-                        Total base: <span className="text-blue-500">{totalBase}€</span>
-                    </span>
-                    <span className="font-bold text-2xl">
-                        Total importe: <span className="text-blue-500">{totalInvoice}€</span>
-                    </span>
-                </div>
-            </section>
-            <section className="col-span-5">
-                <PDFDownloadLink document={<PDF columns={columns} data={bills} />} fileName="test">
-                    {({ loading }) => (loading ? "Loading document..." : "Download now!")}
-                </PDFDownloadLink>
-
-                <PDFViewer width={"100%"} height={"80%"} showToolbar={true}>
-                    <PDF columns={columns} data={bills} />
-                </PDFViewer>
-            </section>
+        <div className=" flex flex-col w-full gap-2">
+            <div className="bg-gray-800 py-3.5 border-l">
+                <h1 className="text-3xl text-white font-bold text-center">{client?.name}</h1>
+            </div>
+            <div className="grid grid-cols-10 gap-4 ml-4 mr-4">
+                <section className="col-span-6 gap-2 flex flex-col">
+                    <BillTable data={bills} columns={columns} />
+                    <div className="bg-white rounded-md p-4 flex flex-col w-fit">
+                        <span className="font-bold text-2xl">
+                            Total base: <span className="text-blue-500">{totalBase}€</span>
+                        </span>
+                        <span className="font-bold text-2xl">
+                            Total importe: <span className="text-blue-500">{totalInvoice}€</span>
+                        </span>
+                    </div>
+                </section>
+                <section className="col-span-4">
+                    <PDFViewer width={"100%"} height={"80%"} showToolbar={true}>
+                        <PDF columns={columns} data={bills} />
+                    </PDFViewer>
+                </section>
+            </div>
         </div>
     );
 }

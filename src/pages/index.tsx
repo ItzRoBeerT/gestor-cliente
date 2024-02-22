@@ -11,7 +11,7 @@ function Home() {
             <div className="col-span-2 bg-neutral-50">
                 <Clients />
             </div>
-            <div className="col-span-10 flex bg-slate-500">
+            <div className="col-span-10 flex bg-slate-500 w-full">
                 {client ? <Client /> : <NoClients />}
             </div>
         </div>

@@ -50,7 +50,6 @@ type PDFProps = {
 
 function PDF(props: PDFProps) {
     const { columns, data } = props;
-    console.log({ data });
 
     return (
         <Document style={{ width: "100%" }}>
@@ -99,8 +98,6 @@ const TableRow = (props: ItemsTableProps & { header?: boolean }) => {
             return acc;
         }, {}) as Bill;
     });
-
-    console.log({ filteredColumns });
 
     const rows = items.map((invoice, index) => {
         return (

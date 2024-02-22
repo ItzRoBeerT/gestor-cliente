@@ -42,3 +42,31 @@ export const addBill = async (bill: {
     const data = await response.json();
     return data;
 };
+
+export const updateBill = async (bill: {
+    _id: number;
+    invoice: string;
+    date: string;
+    base: number;
+    iva: number;
+    amount: number;
+}) => {
+
+    const objBill = {
+        invoice: bill.invoice,
+        date: bill.date,
+        base: bill.base,
+        iva: bill.iva,
+        amount: bill.amount 
+    }
+
+    const response = await fetch(`${API_URL}/bill/update/${bill._id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(objBill),
+    });
+    const data = await response.json();
+    return data;
+};

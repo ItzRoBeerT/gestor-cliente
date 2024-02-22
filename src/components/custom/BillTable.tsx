@@ -5,10 +5,13 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     getFilteredRowModel,
+    ColumnDef,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Billtable.css";
 import InvoiceModal from "../Form/InvoiceModal";
+import { updateBill } from "../../api/api";
+import { useBillStore } from "../../store/billStore";
 
 //TData
 type Bill = {
@@ -27,17 +30,48 @@ type Props = {
     columns: any[];
 };
 
+const defaultColumn: Partial<ColumnDef<Bill>> = {
+    cell: ({ getValue, row: { index }, column: { id }, table }) => {
+        const initialValue = getValue();
+        // We need to keep and update the state of the cell normally
+        const [value, setValue] = useState(initialValue);
+
+        // When the input is blurred, we'll call our table meta's updateData function
+        const onBlur = () => {
+            table.options.meta?.updateData(index, id, value);
+        };
+
+        // If the initialValue is changed external, sync it up with our state
+        useEffect(() => {
+            setValue(initialValue);
+        }, [initialValue]);
+
+        return (
+            <input
+                className="w-full"
+                value={value as string}
+                onChange={(e) => setValue(e.target.value)}
+                onBlur={onBlur}
+            />
+        );
+    },
+};
+
 function BillTable(props: Props) {
     //#region VARIABLES
     const { data, columns } = props;
     const [sorting, setSorting] = useState([]);
     const [filtering, setFiltering] = useState("");
     const [open, setOpen] = useState(false);
+    const setTotalBase = useBillStore((state) => state.setTotalBase);
+    const setTotalInvoice = useBillStore((state) => state.setTotalInvoice);
+    const setBills = useBillStore((state) => state.setBills);
     //#endregion
 
     const table = useReactTable({
         data: data,
         columns,
+        defaultColumn: defaultColumn,
         getCoreRowModel: getCoreRowModel<Bill>(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -48,11 +82,35 @@ function BillTable(props: Props) {
         },
         onSortingChange: setSorting as any,
         onGlobalFilterChange: setFiltering as any,
+        meta: {
+            updateData: async (rowIndex: number, columnId: string, value: string) => {
+                const selectedBill = data[rowIndex];
+                const updatedBill = {
+                    ...selectedBill,
+                    [columnId]: columnId === 'base' || 'amount' ? parseFloat(value) : value,
+                };
+                await updateBill(updatedBill);
+
+                const updatedBills = data.map((bill, index) =>
+                    index === rowIndex ? updatedBill : bill
+                );
+                setBills(updatedBills);
+                   
+                if(columnId === "base" || columnId === "amount") {
+                    const totalInvoice = updatedBills.reduce((acc: number, bill: any) => acc + bill.amount, 0);
+                    const totalBase = updatedBills.reduce((acc: number, bill: any) => acc + bill.base, 0);
+                    setTotalBase(totalBase);
+                    setTotalInvoice(totalInvoice);
+                }
+
+            
+            },
+        },
     });
 
     return (
-        <div>
-            <div className="flex gap-4 mb-4">
+        <div style={{ height: "730px" }}>
+            <div className="flex gap-2 mb-4">
                 <input
                     type="text"
                     value={filtering}
@@ -103,7 +161,7 @@ function BillTable(props: Props) {
                 </tbody>
             </table>
 
-            <div className="flex justify-center mt-4 gap-4">
+            <div className="flex justify-center mt-4 gap-2">
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     onClick={() => table.setPageIndex(table.getPageCount() - 1)}
@@ -118,11 +176,7 @@ function BillTable(props: Props) {
                 </button>
                 <button
                     className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => {
-                        if (table.getPageCount() < table.getPageCount() - 1) {
-                            table.nextPage();
-                        }
-                    }}
+                    onClick={() => table.nextPage()}
                 >
                     Siguiente
                 </button>
