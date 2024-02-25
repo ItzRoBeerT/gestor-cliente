@@ -62,7 +62,7 @@ function Client() {
 
     return (
         <div className=" flex flex-col w-full gap-2">
-            <div className="bg-gray-800 py-3.5 border-l">
+            <div className="bg-gray-800 py-3.5">
                 <h1 className="text-3xl text-white font-bold text-center">{client?.name}</h1>
             </div>
             <div className="grid grid-cols-10 gap-4 ml-4 mr-4">

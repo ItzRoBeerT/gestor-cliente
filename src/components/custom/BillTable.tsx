@@ -84,13 +84,19 @@ function BillTable(props: Props) {
         onGlobalFilterChange: setFiltering as any,
         meta: {
             updateData: async (rowIndex: number, columnId: string, value: string) => {
+                
+                //si no hay cambios no se hace nada
+                if (data[rowIndex][columnId] === value) {
+                    return;
+                }
+                
                 const selectedBill = data[rowIndex];
                 const updatedBill = {
                     ...selectedBill,
-                    [columnId]: columnId === 'base' || 'amount' ? parseFloat(value) : value,
+                    [columnId]: columnId === 'base' || columnId === 'amount' ? parseFloat(value) : value,
                 };
                 await updateBill(updatedBill);
-
+                                
                 const updatedBills = data.map((bill, index) =>
                     index === rowIndex ? updatedBill : bill
                 );
