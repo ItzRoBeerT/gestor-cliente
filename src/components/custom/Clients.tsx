@@ -3,7 +3,7 @@ import { getClients, removeClient } from "../../api/api";
 import { Client } from "../../models/types";
 import { useClientStore } from "../../store/clientStore";
 import ClientSearch from "../Form/ClientSearch";
-import papelera from "../../../public/papelera.svg";
+import papelera from "../../assets/papelera.svg";
 function Clients() {
     const clients = useClientStore((state) => state.clients);
     const setClients = useClientStore((state) => state.setClients);
