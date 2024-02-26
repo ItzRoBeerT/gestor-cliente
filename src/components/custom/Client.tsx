@@ -79,7 +79,7 @@ function Client() {
                 </section>
                 <section className="col-span-4">
                     <PDFViewer width={"100%"} height={"80%"} showToolbar={true}>
-                        <PDF columns={columns} data={bills} />
+                        <PDF columns={columns} data={bills} clientName={client?.name || ''} />
                     </PDFViewer>
                 </section>
             </div>

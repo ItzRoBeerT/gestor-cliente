@@ -2,11 +2,17 @@ import { Document, Page, Text, StyleSheet, View } from "@react-pdf/renderer";
 import { Fragment } from "react";
 import moment from "moment";
 import { Bill } from "../../models/types";
+import { useClientStore } from "../../store/clientStore";
 
 const styles = StyleSheet.create({
     page: {
         width: "100%",
+        padding: '20px',
         height: "100%",
+    },
+    title:{
+        textAlign: 'center',
+        fontSize: '40px'
     },
     tableContainer: {
         display: "flex",
@@ -46,15 +52,16 @@ type ItemsTableProps = {
 type PDFProps = {
     columns: any[];
     data: any[];
+    clientName: string;
 };
 
 function PDF(props: PDFProps) {
-    const { columns, data } = props;
+    const { columns, data , clientName } = props;
 
     return (
         <Document style={{ width: "100%" }}>
             <Page style={styles.page}>
-                <Text>Factura</Text>
+                <Text style={styles.title}>Cliente {clientName}</Text>
                 <ItemsTable items={data} columns={columns} />
             </Page>
         </Document>
