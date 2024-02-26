@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Modal from "../Form/Modal";
 import { useState } from "react";
 import logo from '../../assets/anerol-logo.webp'
