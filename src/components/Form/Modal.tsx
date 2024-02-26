@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { addClient } from "../../api/api";
+import { addClient, getClients } from "../../api/api";
+import { useClientStore } from "../../store/clientStore";
 
 type ModalProps = {
     open: boolean;
@@ -9,16 +10,17 @@ type ModalProps = {
 function Modal(params: ModalProps) {
     const { open, close } = params;
     const [name, setName] = useState("");
-
+    const setClients = useClientStore((state) => state.setClients);
     const addNewClient = async () => {
         const client = {
             name: name,
         };
 
         const response = await addClient(client);
-        console.log(response);
         setName("");
 
+        const clients = await getClients();
+        setClients(clients);
         close();
     };
 
@@ -32,7 +34,7 @@ function Modal(params: ModalProps) {
         >
             <div className="bg-white p-8 rounded-md text-black">
                 <h1 className="text-2xl font-bold text-center">Añadir Cliente</h1>
-                <div className="flex flex-col gap-4 mt-4">
+                <div className="flex flex-col gap-4 mt-4 w-full">
                     <input
                         type="text"
                         value={name}
@@ -49,7 +51,7 @@ function Modal(params: ModalProps) {
                 </div>
                 <button
                     onClick={close}
-                    className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer"
+                    className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full cursor-pointer w-full"
                 >
                     Cerrar
                 </button>

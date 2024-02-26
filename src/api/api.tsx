@@ -51,14 +51,13 @@ export const updateBill = async (bill: {
     iva: number;
     amount: number;
 }) => {
-
     const objBill = {
         invoice: bill.invoice,
         date: bill.date,
         base: bill.base,
         iva: bill.iva,
-        amount: bill.amount 
-    }
+        amount: bill.amount,
+    };
 
     const response = await fetch(`${API_URL}/bill/update/${bill._id}`, {
         method: "PATCH",
@@ -69,4 +68,29 @@ export const updateBill = async (bill: {
     });
     const data = await response.json();
     return data;
+};
+
+export const removeBill = async (billId: number) => {
+    try {
+        const response = await fetch(`${API_URL}/bill/remove/${billId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            // Si la respuesta no es exitosa (por ejemplo, un error 404 o 500), lanzamos un error con el mensaje del servidor
+            const errorMessage = await response.text();
+            throw new Error(errorMessage);
+        }
+
+        // Si la respuesta es exitosa, retornamos los datos
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        // Si hay un error de red o algún otro error, lo manejamos aquí
+        console.error("Error al eliminar la factura:", error);
+        throw new Error("Hubo un error al intentar eliminar la factura");
+    }
 };

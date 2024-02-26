@@ -3,6 +3,7 @@ import { addBill, getClientBills } from "../../api/api";
 import { useClientStore } from "../../store/clientStore";
 import { cli } from "@tauri-apps/api";
 import { useBillStore } from "../../store/billStore";
+import { Bill } from "../../models/types";
 
 type ModalProps = {
     open: boolean;
@@ -14,6 +15,8 @@ function InvoiceModal(props: ModalProps) {
     const client = useClientStore((state) => state.client);
     const { open, close } = props;
     const setBills = useBillStore((state) => state.setBills);
+    const setTotalBase = useBillStore((state) => state.setTotalBase);
+    const setTotalInvoice = useBillStore((state) => state.setTotalInvoice);
     const [invoice, setInvoice] = useState("");
     const [date, setDate] = useState("");
     const [base, setBase] = useState(0);
@@ -88,9 +91,20 @@ function InvoiceModal(props: ModalProps) {
             amount: "",
         });
 
-        const bills = await getClientBills(client?._id);
+        const bills = await getClientBills(client?._id) as Bill[];
         setBills(bills);
 
+        const totalInvoice = bills.reduce(
+            (acc: number, bill: Bill) => acc + bill.amount,
+            0
+        );
+        const totalBase = bills.reduce(
+            (acc: number, bill: Bill) => acc + bill.base,
+            0
+        );
+
+        setTotalBase(totalBase);
+        setTotalInvoice(totalInvoice);
         close();
     };
     //#endregion

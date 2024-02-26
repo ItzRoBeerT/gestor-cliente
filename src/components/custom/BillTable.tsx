@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import "./Billtable.css";
 import InvoiceModal from "../Form/InvoiceModal";
-import { updateBill } from "../../api/api";
+import { removeBill, updateBill } from "../../api/api";
 import { useBillStore } from "../../store/billStore";
 
 //TData
@@ -68,6 +68,7 @@ function BillTable(props: Props) {
     const setBills = useBillStore((state) => state.setBills);
     //#endregion
 
+    //#region FUNCIONES
     const table = useReactTable({
         data: data,
         columns,
@@ -84,35 +85,46 @@ function BillTable(props: Props) {
         onGlobalFilterChange: setFiltering as any,
         meta: {
             updateData: async (rowIndex: number, columnId: string, value: string) => {
-                
                 //si no hay cambios no se hace nada
                 if (data[rowIndex][columnId] === value) {
                     return;
                 }
-                
+
                 const selectedBill = data[rowIndex];
                 const updatedBill = {
                     ...selectedBill,
-                    [columnId]: columnId === 'base' || columnId === 'amount' ? parseFloat(value) : value,
+                    [columnId]:
+                        columnId === "base" || columnId === "amount" ? parseFloat(value) : value,
                 };
                 await updateBill(updatedBill);
-                                
+
                 const updatedBills = data.map((bill, index) =>
                     index === rowIndex ? updatedBill : bill
                 );
                 setBills(updatedBills);
-                   
-                if(columnId === "base" || columnId === "amount") {
-                    const totalInvoice = updatedBills.reduce((acc: number, bill: any) => acc + bill.amount, 0);
-                    const totalBase = updatedBills.reduce((acc: number, bill: any) => acc + bill.base, 0);
+
+                if (columnId === "base" || columnId === "amount") {
+                    const totalInvoice = updatedBills.reduce(
+                        (acc: number, bill: any) => acc + bill.amount,
+                        0
+                    );
+                    const totalBase = updatedBills.reduce(
+                        (acc: number, bill: any) => acc + bill.base,
+                        0
+                    );
                     setTotalBase(totalBase);
                     setTotalInvoice(totalInvoice);
                 }
-
-            
             },
         },
     });
+
+    const onRemoveBill = async (bill: any) => {
+        const id = bill.original._id;
+        const res = await removeBill(id);
+        console.log({ res });
+    };
+    //#endregion
 
     return (
         <div style={{ height: "730px" }}>
@@ -162,6 +174,14 @@ function BillTable(props: Props) {
                                     {flexRender(cel.column.columnDef.cell, cel.getContext())}
                                 </td>
                             ))}
+                            <td>
+                                <button
+                                    onClick={() => onRemoveBill(row)}
+                                    className="px-4  bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                >
+                                    Eliminar
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
