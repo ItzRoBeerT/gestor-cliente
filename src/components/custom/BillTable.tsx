@@ -10,8 +10,10 @@ import {
 import { useEffect, useState } from "react";
 import "./Billtable.css";
 import InvoiceModal from "../Form/InvoiceModal";
-import { removeBill, updateBill } from "../../api/api";
+import { getClientBills, removeBill, updateBill } from "../../api/api";
 import { useBillStore } from "../../store/billStore";
+import { useClientStore } from "../../store/clientStore";
+import { cli } from "@tauri-apps/api";
 
 //TData
 type Bill = {
@@ -66,6 +68,7 @@ function BillTable(props: Props) {
     const setTotalBase = useBillStore((state) => state.setTotalBase);
     const setTotalInvoice = useBillStore((state) => state.setTotalInvoice);
     const setBills = useBillStore((state) => state.setBills);
+    const client = useClientStore((state) => state.client);
     //#endregion
 
     //#region FUNCIONES
@@ -122,7 +125,21 @@ function BillTable(props: Props) {
     const onRemoveBill = async (bill: any) => {
         const id = bill.original._id;
         const res = await removeBill(id);
-        console.log({ res });
+       
+        const newBills = await getClientBills(client?._id);
+        setBills(newBills);
+
+        const totalInvoice = newBills.reduce(
+            (acc: number, bill: any) => acc + bill.amount,
+            0
+        );
+        const totalBase = newBills.reduce(
+            (acc: number, bill: any) => acc + bill.base,
+            0
+        );
+        
+        setTotalBase(totalBase);
+        setTotalInvoice(totalInvoice);
     };
     //#endregion
 

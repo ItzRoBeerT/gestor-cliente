@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { getClients } from "../../api/api";
+import { getClients, removeClient } from "../../api/api";
 import { Client } from "../../models/types";
 import { useClientStore } from "../../store/clientStore";
 import ClientSearch from "../Form/ClientSearch";
-
+import papelera from "../../../public/papelera.svg";
 function Clients() {
-    const clients = useClientStore((state)=> state.clients);
-    const setClients = useClientStore((state)=> state.setClients);
+    const clients = useClientStore((state) => state.clients);
+    const setClients = useClientStore((state) => state.setClients);
     const setClient = useClientStore((state) => state.setClient);
 
     //#region FUNCTIONS
@@ -20,6 +20,17 @@ function Clients() {
 
     const handleClientClick = (client: Client) => {
         setClient(client);
+    };
+
+    const handleRemoveClient = async (client: Client) => {
+        console.log("Cliente eliminado:", client);
+        const response = await removeClient(client._id);
+
+        if(response){ 
+            const updateClients = clients.filter(cli => cli._id !== client._id)
+            setClients(updateClients)
+            setClient(null);
+        }
     };
     //#endregion
 
@@ -38,7 +49,18 @@ function Clients() {
                         }}
                         key={client.name}
                     >
-                        {client.name}
+                        <div className="flex items-center justify-between">
+                            {client.name}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveClient(client);
+                                }}
+                                className="hover:bg-red-300 rounded-full transition p-2"
+                            >
+                                <img src={papelera} className="h-4" alt="React logo" />
+                            </button>
+                        </div>
                     </li>
                 ))}
             </ul>

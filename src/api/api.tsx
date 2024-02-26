@@ -89,8 +89,29 @@ export const removeBill = async (billId: number) => {
         const data = await response.json();
         return data;
     } catch (error) {
-        // Si hay un error de red o algún otro error, lo manejamos aquí
         console.error("Error al eliminar la factura:", error);
         throw new Error("Hubo un error al intentar eliminar la factura");
+    }
+};
+
+export const removeClient = async (clientId: number) => {
+    try {
+        const response = await fetch(`${API_URL}/client/remove/${clientId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error al eliminar el cliente:", error);
+        throw new Error("Hubo un error al intentar eliminar el cliente");
     }
 };
