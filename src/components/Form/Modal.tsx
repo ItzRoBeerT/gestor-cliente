@@ -16,7 +16,7 @@ function Modal(params: ModalProps) {
             name: name,
         };
 
-        const response = await addClient(client);
+        await addClient(client);
         setName("");
 
         const clients = await getClients();

@@ -1,6 +1,6 @@
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import { PDFViewer } from "@react-pdf/renderer";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useBillStore } from "../../store/billStore";
 import { useClientStore } from "../../store/clientStore";
 import BillTable from "./BillTable";

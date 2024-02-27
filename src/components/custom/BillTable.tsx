@@ -6,6 +6,7 @@ import {
     getSortedRowModel,
     getFilteredRowModel,
     ColumnDef,
+    RowData,    
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import "./Billtable.css";
@@ -13,7 +14,13 @@ import InvoiceModal from "../Form/InvoiceModal";
 import { getClientBills, removeBill, updateBill } from "../../api/api";
 import { useBillStore } from "../../store/billStore";
 import { useClientStore } from "../../store/clientStore";
-import { cli } from "@tauri-apps/api";
+
+declare module '@tanstack/react-table' {
+    interface TableMeta<TData extends RowData> {
+      updateData: (rowIndex: number, columnId: string, value: unknown) => void
+    }
+  }
+
 
 //TData
 type Bill = {
@@ -72,7 +79,7 @@ function BillTable(props: Props) {
     //#endregion
 
     //#region FUNCIONES
-    const table = useReactTable({
+    const table = useReactTable<Bill>({
         data: data,
         columns,
         defaultColumn: defaultColumn,
@@ -87,9 +94,9 @@ function BillTable(props: Props) {
         onSortingChange: setSorting as any,
         onGlobalFilterChange: setFiltering as any,
         meta: {
-            updateData: async (rowIndex: number, columnId: string, value: string) => {
+            updateData: async (rowIndex: any, columnId: any, value: any) => {
                 //si no hay cambios no se hace nada
-                if (data[rowIndex][columnId] === value) {
+                if (data[rowIndex as keyof {}][columnId as keyof {}] === value ) {
                     return;
                 }
 
@@ -103,7 +110,7 @@ function BillTable(props: Props) {
 
                 const updatedBills = data.map((bill, index) =>
                     index === rowIndex ? updatedBill : bill
-                );
+                ) as any;
                 setBills(updatedBills);
 
                 if (columnId === "base" || columnId === "amount") {
@@ -124,9 +131,9 @@ function BillTable(props: Props) {
 
     const onRemoveBill = async (bill: any) => {
         const id = bill.original._id;
-        const res = await removeBill(id);
+        await removeBill(id);
        
-        const newBills = await getClientBills(client?._id);
+        const newBills = await getClientBills(client?._id || 0);
         setBills(newBills);
 
         const totalInvoice = newBills.reduce(

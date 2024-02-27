@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "tauri-react",
+    "productName": "gestor-cliente",
     "version": "0.0.0"
   },
   "tauri": {
@@ -39,7 +39,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "montajes-anerol",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -55,9 +55,10 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "tauri-react",
-        "width": 800,
-        "height": 600
+        "title": "Gestor Clientes",
+        "width": 1280,
+        "minWidth": 1280,
+        "height": 720
       }
     ]
   }

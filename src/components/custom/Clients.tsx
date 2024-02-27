@@ -29,7 +29,6 @@ function Clients() {
         if(response){ 
             const updateClients = clients.filter(cli => cli._id !== client._id)
             setClients(updateClients)
-            setClient(null);
         }
     };
     //#endregion

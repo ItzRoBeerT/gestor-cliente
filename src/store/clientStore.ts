@@ -11,6 +11,6 @@ interface ClientState {
 export const useClientStore = create<ClientState>((set) => ({
     client: null,
     clients: [],
-    setClient: (client) => set({ client }),
+    setClient: (client: Client | null) => set({ client }),
     setClients: (clients) => set({clients}),
 }));

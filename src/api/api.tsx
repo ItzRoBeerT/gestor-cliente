@@ -25,7 +25,7 @@ export const getClientBills = async (clientId: number) => {
 };
 
 export const addBill = async (bill: {
-    client: string;
+    client: string | number;
     invoice: string;
     date: string;
     base: number;

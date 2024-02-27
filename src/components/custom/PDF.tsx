@@ -2,7 +2,6 @@ import { Document, Page, Text, StyleSheet, View } from "@react-pdf/renderer";
 import { Fragment } from "react";
 import moment from "moment";
 import { Bill } from "../../models/types";
-import { useClientStore } from "../../store/clientStore";
 
 const styles = StyleSheet.create({
     page: {
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
 });
 
 type ItemsTableProps = {
-    items: Bill[];
+    items: any[];
     columns?: any[];
 };
 
@@ -95,20 +94,20 @@ const ItemsTable = (props: ItemsTableProps) => {
 const TableRow = (props: ItemsTableProps & { header?: boolean }) => {
     const { items } = props;
     const filteredColumns = items.map((invoice) => {
-        return Object.keys(invoice).reduce((acc, key) => {
+        return Object.keys(invoice).reduce((acc: any, key) => {
             if (key === "_id" || key === "__v" || key === "client") return acc;
             if (key === "date") {
-                acc[key] = moment(invoice[key]).format("DD/MM/YYYY");
+                acc[key as keyof {} ] = moment(invoice[key]).format("DD/MM/YYYY");
             } else {
-                acc[key] = invoice[key];
+                acc[key as keyof {}] = invoice[key as keyof {}];
             }
             return acc;
         }, {}) as Bill;
-    });
+    }) as any;
 
     const rows = items.map((invoice, index) => {
         return (
-            <View key={index.toString()} style={styles.row}>
+            <View key={index.toString() + invoice._id} style={styles.row}>
                 <Text style={{ width: "20%" }}>{filteredColumns[index].invoice}</Text>
                 <Text style={{ width: "20%" }}>{filteredColumns[index].date}</Text>
                 <Text style={{ width: "20%" }}>{filteredColumns[index].base}</Text>

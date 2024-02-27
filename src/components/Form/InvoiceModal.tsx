@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { addBill, getClientBills } from "../../api/api";
 import { useClientStore } from "../../store/clientStore";
-import { cli } from "@tauri-apps/api";
 import { useBillStore } from "../../store/billStore";
 import { Bill } from "../../models/types";
 
@@ -72,7 +71,7 @@ function InvoiceModal(props: ModalProps) {
         }
 
         const invoiceData = {
-            client: client?._id,
+            client: client?._id || '',
             invoice: invoice,
             date,
             base,
@@ -91,7 +90,7 @@ function InvoiceModal(props: ModalProps) {
             amount: "",
         });
 
-        const bills = await getClientBills(client?._id) as Bill[];
+        const bills = await getClientBills(client?._id || 0) as Bill[];
         setBills(bills);
 
         const totalInvoice = bills.reduce(
