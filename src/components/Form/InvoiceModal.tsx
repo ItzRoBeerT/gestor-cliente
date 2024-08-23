@@ -39,15 +39,6 @@ function InvoiceModal(props: ModalProps) {
             setError({ ...error, invoice: "", date: "La fecha es obligatoria" });
             return;
         }
-        if (base <= 0) {
-            setError({
-                ...error,
-                invoice: "",
-                date: "",
-                base: "La base imponible debe ser mayor a 0",
-            });
-            return;
-        }
         if (iva <= 0) {
             setError({
                 ...error,
@@ -58,18 +49,6 @@ function InvoiceModal(props: ModalProps) {
             });
             return;
         }
-        if (amount <= 0) {
-            setError({
-                ...error,
-                invoice: "",
-                date: "",
-                base: "",
-                iva: "",
-                amount: "El importe debe ser mayor a 0",
-            });
-            return;
-        }
-
         const invoiceData = {
             client: client?._id || '',
             invoice: invoice,
